@@ -5,6 +5,7 @@ char* mqtt_server = "192.168.0.99";
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
+  Serial.println("Booting");
 
   wifi_init(mqtt_server);
 
@@ -12,13 +13,6 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  if(!wifi_isConnected()){
-    mqtt_reconnect();
-    if(!wifi_isConnected()){
-      delay(5000);
-    }
-  }
   mqtt_loop();
 
   if(!wifi_isConnected()){
