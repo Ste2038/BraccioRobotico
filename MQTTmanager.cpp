@@ -1,4 +1,5 @@
 #include "MQTTmanager.h"
+//#include "Config.h"
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -73,7 +74,7 @@ void mqtt_reconnect() {
     if (client.connect("ESP8266Client")) {
       Serial.println("connected");
       // Subscribe
-      //client.subscribe("Controller/#");
+      mqtt_subscribeAll();
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -81,6 +82,32 @@ void mqtt_reconnect() {
       // Wait 5 seconds before retrying
     }
   }
+}
+
+void mqtt_subscribe(char* topic){
+  client.subscribe(topic);
+}
+
+void mqtt_subscribeAll(){
+  /*if(num_stepper >= 1)
+    mqtt_subscribe("Braccio/Motori/Stepper1/set");
+  if(num_stepper >= 2)
+    mqtt_subscribe("Braccio/Motori/Stepper2/set");
+  if(num_stepper >= 3)
+    mqtt_subscribe("Braccio/Motori/Stepper3/set");
+
+  if(num_servo >= 1)
+    mqtt_subscribe("Braccio/Motori/Servo1/set");
+  if(num_servo >= 2)
+    mqtt_subscribe("Braccio/Motori/Servo2/set");
+  if(num_servo >= 3)
+    mqtt_subscribe("Braccio/Motori/Servo3/set");
+  if(num_servo >= 4)
+    mqtt_subscribe("Braccio/Motori/Servo4/set");
+  if(num_servo >= 5)
+    mqtt_subscribe("Braccio/Motori/Servo5/set");
+  if(num_servo >= 6)
+    mqtt_subscribe("Braccio/Motori/Servo6/set");*/
 }
 
 void mqtt_publish(char* topic, char* payload){
@@ -133,12 +160,20 @@ void mqtt_callback(char* topic, byte* message, unsigned int length) {
   Serial.print(topic);
   Serial.print(". Message: ");
   String messageTemp;
+  char* messageTempChar = (char*) malloc(length * sizeof(char));
+  int i = 0;
+  int numPassi = 0;
 
-  for (int i = 0; i < length; i++) {
+  for (i = 0; i < length; i++) {
     Serial.print((char)message[i]);
     messageTemp += (char)message[i];
+    messageTempChar[i] = (char)message[i];
   }
+  messageTempChar[i] = '\0';
   Serial.println();
+
+  numPassi = messageTemp.toInt();
+  Serial.println(numPassi);
 
   // Feel free to add more if statements to control more GPIOs with MQTT
 
@@ -155,4 +190,24 @@ void mqtt_callback(char* topic, byte* message, unsigned int length) {
       //digitalWrite(ledPin, LOW);
     }
   }*/
+
+  if(String(topic) == "Braccio/Motori/Stepper1/set"){
+    mqtt_publish("Braccio/Motori/Stepper1", messageTempChar);
+    for(int i = 0; i < numPassi; i++){
+      digitalWrite(26, HIGH);
+      delay(1);
+      digitalWrite(26, LOW);
+      delay(10);
+    }
+  }
+  else if(String(topic) == "Braccio/Motori/Stepper2/set"){
+    mqtt_publish("Braccio/Motori/Stepper2", messageTempChar);
+
+    for(int i = 0; i < numPassi; i++){
+      digitalWrite(33, HIGH);
+      delay(1);
+      digitalWrite(33, LOW);
+      delay(100);
+    }
+  }
 }

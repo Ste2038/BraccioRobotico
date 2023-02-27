@@ -10,7 +10,7 @@ void setup() {
   myservo1.attach(18);  // lega l'oggetto myservo al pin a cui abbiamo collegato il nostro servo, in questo caso il pin 8 
   myservo2.attach(4); 
   myservo3.attach(15); 
-  myservo4.attach(13); 
+  myservo4.attach(12); 
   myservo5.attach(13); 
   myservo6.attach(13); 
   Serial.begin(9600); 
